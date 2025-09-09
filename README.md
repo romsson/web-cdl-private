@@ -11,6 +11,7 @@ Le but de ce projet est de faire un serveur de forward entre une interface web e
 - Garder le contexte de la conversation
 - Faire du streaming (optionnel)
 - Faire du fine-tuning / RAG (optionnel)
+- Features : proposer des prompts, liker les réponses, comparer des modèles, 
 
 ## Installer Ollama
 
@@ -24,7 +25,14 @@ Pour Windows :
 
 > https://ollama.com/download/windows
 
+Pour Linux : 
+
+dans le terminal :
+``` curl -fsSL https://ollama.com/install.sh | sh ```
+
 Une fois Ollama installé, on peut lancer le modèle LLaMA2 (détails du modèle ici https://www.llama.com/llama2/ ). D'autres modèles sont disponibles https://ollama.com/models mais ils prennent plus de place et sont plus lourds (LLaMA2-13B, LLaMA2-70B, etc).
+
+Note: La première execution du modele implique de le telecharger ce qui peut prendre quelques minutes.
 
 > ollama run llama2
 
@@ -40,7 +48,7 @@ Tester une requête de génération (à faire dans un autre terminal là encore)
 
 > curl http://localhost:11434/api/generate -d '{
   "model": "llama2",
-  "prompt": "Votre prompt ici",
+  "prompt": "Votre prompt ici"
 }'
 
 Le modèle devrait répondre avec un JSON.
