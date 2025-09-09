@@ -107,18 +107,139 @@ Cela est tres utile lorsqu'il y a plusieurs controbuteurs a un projet par exempl
 
 La commande ```npm install``` executée dans le dossier permettra de reinstaller toutes les dependances à partir du contenu de ```package.json```. On peut rapidement faire l'essaie en supprimant le dossier node_modules et en entrant ```npm install``` > les modules listés dans ```package.json``` seront tous reinstallés.
 
-Il est aussi possible d'installer un module globalement sur sa machine en   ajoutant le drapeau ```-g``` : ```npm install -g socket.io```
+Il est aussi possible d'installer un module globalement sur sa machine en ajoutant le drapeau ```-g``` : ```npm install -g socket.io```
 
 ## 2 Style de programmation
 ### E/S asynchrones et fonctions de rappel
+Les systèmes traditionnels traitent une opération d'entrée-sortie (lecture/écriture de fichier, accès base de données, requête réseau...) comme un appel de fonction : le programme appelant est bloqué tant que le résultat n'est pas disponible.
+```
+<?php
+$page = file_get_contents('http://nodejs.org/'); // peut durer un certain temps
+echo "hello, world\n";
+// ne s'affiche qu'après ... un certain temps
+?>
+```
+Node.js résoud ce problème en gérant systématiquement les E/S en mode asynchrone. Le programme appelant fournit une fonction de rappel qui est activée lorsque l'opération est achevée :
+
+[exemple_async.js](examples/exemple_async.js)
+```
+http.get('http://nodejs.org/', function(res) {// fonction appelée dès que
+console.log(res.headers);                     // la réponse est disponible                                  
+});
+console.log('hello,world'); // s'affiche immédiatement
+```
+
+Dans cet exemple le message "hello, world" est affiché avant les entêtes récupérées par la requête http.
+
+Bon à savoir : il est de la responsabilité d'une fonction de rappel de ne pas durer trop longtemps pour ne pas bloquer la boucle de gestion des événements.
 
 ## 3 Modules
 ### L'API Modules de CommonJS
+La possibilité (volontaire ou accidentelle) de polluer l'espace global depuis n'importe quelle partie d'une application n'est pas l'une des qualités de Javascript.
+Node.js résoud ce problème en implémentant la notion de modules [modules](https://wiki.commonjs.org/wiki/Modules) spécifiée par
+[CommonJS](https://en.wikipedia.org/wiki/CommonJS) : [node modules](https://nodejs.org/api/modules.html#modules_modules)
+
+* un module utilise la variable prédéfinie ```exports``` comme unique moyen de transmettre son API
+(attributs, méthodes) au module appelant,
+* un module accède à l'API d'un module dont il dépend, via la fonction prédéfinie ```require()``` qui
+lui renvoie les informations exportées par celui-ci.
+
+Module [increment.js](examples/increment.js)
+```
+let i = 0;
+function increment(){
+    return i++;
+}
+module.exports = { increment }
+```
+
+Module appelant: [callincrement.js](examples/callincrement.js)
+```
+const incrementmodule = require('./increment'); // récupère les infos exportées par increment.js
+console.log(incrementmodule.increment());
+// 0
+console.log(incrementmodule.increment());
+// 1
+console.log(typeof(i));
+// undefined
+```
+
 ### Divers types de modules
+Node.js possède un certain nombre de modules de base, que l'on peut simplement charger en précisant leur nom, (c'est à dire sans besoin de les installer via npm)
+
+```
+var http = require('http');
+// http est un module de base
+```
+La deuxième possibilité consiste à désigner un module par son chemin d'accès (relatif ou absolu) :
+```
+var util = require('./util');
+// désigne le fichier ./util.js
+var lib = require('C:/Users/Daniel/Documents/travail/lib');
+// lib.js
+```
+Noter qu'il est inutile de mentionner l'extension .js, et que le chemin relatif ./ est obligatoire, même pour un fichier localisé dans le même répertoire que le module appelant.
+
+S'il ne s'agit ni d'un module de base, ni d'un fichier spécifié via son chemin d'accès, node examine le contenu des répertoires node_modules local, puis global. Ces répertoires sont utilisés pour stocker les modules récupérés via [npm](https://www.npmjs.com/).
+```
+var io = require('socket.io');
+// socket.io est un module chargé via npm
+```
 
 ## 4 Evénements
-### 5.1 CPS vs. Event handlers
-### 5.2 Event Handlers
+### Continuation-Passing Style vs. Event handlers
+En programmation asynchrone, pour qu'une fonction ne bloque pas le programme appelant, on lui passe en paramètre une fonction dite fonction de callback à appeler avec le résultat demandé, une fois qu'elle l'a obtenu. Il s'agit d'un motif (pattern) récurrent en programmation, connu sous le nom de Continuation-passing Style (CPS) :
+
+```
+http.get({host:'nodejs.org'}, function(res) { // fonction appelée dès que res
+    console.log(res.headers);                  // (la réponse) est disponible
+});
+console.log('hello,world'); // s'affiche immédiatement
+```
+
+Il ne faut pas confondre le pattern CPS avec celui des gestionnaires d'événement, qui s'applique
+plutôt en cas d'événements répétitifs ou aléatoires :
+
+[exemple_events.js](examples/exemple_events.js)
+```
+require('http').get( 'http://nodejs.org/en', function(response) { // CPS
+    response.setEncoding('utf-8');
+
+    response.on('data', function(data) { // 'data' event handler
+        console.log('\n[DATA]',data);
+    });
+
+    response.on('end', function() { // 'end' event handler
+        console.log('\n[END]');
+    });
+});
+```
+
+### Event Handlers
+Sous Node.js un événement est caractérisé par son nom (cf. data ou end dans l'exemple précédent).
+La seule façon de connaître le nom des événements émis par un objet donné, ainsi que la liste et la
+nature des paramètres passés à la fonction de rappel est de consulter la documentation de l'objet
+en question.
+
+L'API pour la gestion des événements est classique. Pour enregistrer un gestionnaire il existe deux
+synonymes :
+```
+let callbackfunction = function() { ... };
+object.addListener('event_type', callbackfunction);
+object.on('event_type', function() { ... });
+```
+Pour une fonction de rappel à usage unique :
+```
+object.once('event_type', function() { ... });
+```
+Pour supprimer un gestionnaire préalablement enregistré :
+```
+object.removeListener('event_type', callbackfunction); // pas une fonction anonyme
+```
+Pour supprimer tous les gestionnaires pour un type d'événement donné :
+```
+object.removeAllListeners('event_type');
+```
 
 ## 5 Fichiers
 ### 6.1 Lecture
