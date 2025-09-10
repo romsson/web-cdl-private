@@ -3,5 +3,5 @@ console.log(incrementmodule.increment());
 // 0
 console.log(incrementmodule.increment());
 // 1
-console.log(typeof(i));
+console.log(typeof (i));
 // undefined

@@ -10,7 +10,7 @@ Cours node.js Daniel Muller - revision 2025
 
 Node.js a été conçu dès le départ autour d'une boucle de gestion d'événements asynchrones, et un [mécanisme d'entrées/sorties non bloquantes](https://en.wikipedia.org/wiki/Asynchronous_I/O), ce qui rend le framework extrêmement performant en termes de montée en charge.
 
-Il intègre un mécanisme qui permet de limiter la portée des variables en isolant le code dans des [modules](http://wiki.commonjs.org/wiki/Modules/1.0) et possède un système de gestion de bibliothèques contribuées très bien alimenté par la communauté [npm](https://www.npmjs.org/).
+Il intègre un mécanisme qui permet de limiter la portée des variables en isolant le code dans des [modules](http://wiki.commonjs.org/wiki/Modules/1.0) et possède un système de gestion de bibliothèques très bien alimenté par la communauté [npm](https://www.npmjs.org/).
 
 Il existe de nombreux modules pour l'accès aux fichiers, au réseau, aux bases de données ([SQL ou NoSQL](https://www.geeksforgeeks.org/sql/difference-between-sql-and-nosql/)), et le développement d'applications web.
 
@@ -46,8 +46,8 @@ Voici par exemple un serveur web répondant "hello, world" quelle que soit la re
 [helloserver.js](examples/helloserver.js)
 ```
 const server = require('http').createServer( function(req, res) {
-res.writeHead(200, {'Content-Type': 'text/plain'});
-res.end("hello, world\n");
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end("hello, world\n");
 });
 server.listen(8080);
 console.log('Adresse du serveur: http://localhost:8080/');
@@ -55,7 +55,7 @@ console.log('Adresse du serveur: http://localhost:8080/');
 
 Executer ce fichier et ouvrir le navigateur à l'adresse http://localhost:8080/
 
-Pour arreter le processus, entrer ctrl+c dans le terminal
+Pour arrêter le processus, entrer ctrl+c dans le terminal
 
 ### npm - Node Package Manager
 Node.js est nativement accompagné d'un outil pour gérer les modules donnant accès à la grande majorité de ses fonctionnalités: [Node Package Manager (npm)](https://www.npmjs.com/).
@@ -88,10 +88,10 @@ exemple d'un fichier package.json
 
 ```
 Le fichier ```package.json``` est créé par npm automatiquement soit : 
-1. Au debut d'un projet, on peut creer un dossier 'nomduprojet' dans lequel on va executer la commande  ``` npm init```. 
+1. Au debut d'un projet, on peut créer un dossier 'nomduprojet' dans lequel on va executer la commande  ``` npm init```. 
     Cette commande permet de donner des informations sur le projet en question par exemple le nom, les auteurs, la licence, le nom du fichier de point d'entrée de l'application...
 2. A l'installation d'un nouveau module dont le projet depend, on entre la commande ``` npm install module ```
-    Cette commande permet de telecharger le module et l'installer dans le dossier du projet dans le sous dossier ```node_modules```, et d'ajouter la dependence dans le fichier ```package.json```.
+    Cette commande permet de télécharger le module et l'installer dans le dossier du projet dans le sous dossier ```node_modules```, et d'ajouter la dependence dans le fichier ```package.json```.
 
 ##### Exemple avec socket.io
 Par exemple, dans le cas d'un projet vide, on peut installer le module socket.io, en entrant la commande suivante:
@@ -102,10 +102,10 @@ Par exemple, dans le cas d'un projet vide, on peut installer le module socket.io
 ```
 le package socket.io sera alors installé dans le sous-dossier ```node_modules``` (créé par npm puisqu'il n'existe pas encore), ainsi que tous le modules dont depend socket.io.
 
-En resumer, npm et le fichier package.json permettent de partager le dossier contenant les differents fichiers d'un projet, sans inclure le sous dossier ```node_modules``` puisque toutes les dependences sont enregistrees dans le fichier ```package.json```.
-Cela est tres utile lorsqu'il y a plusieurs controbuteurs a un projet par exemple.
+En resumer, npm et le fichier package.json permettent de partager le dossier contenant les différents fichiers d'un projet, sans inclure le sous dossier ```node_modules``` puisque toutes les dépendances sont enregistrées dans le fichier ```package.json```.
+Cela est tres utile lorsqu'il y a plusieurs contributeurs a un projet par exemple.
 
-La commande ```npm install``` executée dans le dossier permettra de reinstaller toutes les dependances à partir du contenu de ```package.json```. On peut rapidement faire l'essaie en supprimant le dossier node_modules et en entrant ```npm install``` > les modules listés dans ```package.json``` seront tous reinstallés.
+La commande ```npm install``` exécutée dans le dossier permettra de réinstaller toutes les dépendances à partir du contenu de ```package.json```. On peut rapidement faire l'essaie en supprimant le dossier node_modules et en entrant ```npm install``` > les modules listés dans ```package.json``` seront tous réinstallés.
 
 Il est aussi possible d'installer un module globalement sur sa machine en ajoutant le drapeau ```-g``` : ```npm install -g socket.io```
 
@@ -119,12 +119,12 @@ echo "hello, world\n";
 // ne s'affiche qu'après ... un certain temps
 ?>
 ```
-Node.js résoud ce problème en gérant systématiquement les E/S en mode asynchrone. Le programme appelant fournit une fonction de rappel qui est activée lorsque l'opération est achevée :
+Node.js résout ce problème en gérant systématiquement les E/S en mode asynchrone. Le programme appelant fournit une fonction de rappel qui est activée lorsque l'opération est achevée :
 
 [exemple_async.js](examples/exemple_async.js)
 ```
-http.get('http://nodejs.org/', function(res) {// fonction appelée dès que
-console.log(res.headers);                     // la réponse est disponible                                  
+http.get('http://nodejs.org/', function (res) {// fonction appelée dès que
+    console.log(res.headers);                   // la réponse est disponible                                  
 });
 console.log('hello,world'); // s'affiche immédiatement
 ```
@@ -136,7 +136,7 @@ Bon à savoir : il est de la responsabilité d'une fonction de rappel de ne pas 
 ## 3 Modules
 ### L'API Modules de CommonJS
 La possibilité (volontaire ou accidentelle) de polluer l'espace global depuis n'importe quelle partie d'une application n'est pas l'une des qualités de Javascript.
-Node.js résoud ce problème en implémentant la notion de modules [modules](https://wiki.commonjs.org/wiki/Modules) spécifiée par
+Node.js résout ce problème en implémentant la notion de modules [modules](https://wiki.commonjs.org/wiki/Modules) spécifiée par
 [CommonJS](https://en.wikipedia.org/wiki/CommonJS) : [node modules](https://nodejs.org/api/modules.html#modules_modules)
 
 * un module utilise la variable prédéfinie ```exports``` comme unique moyen de transmettre son API
@@ -160,7 +160,7 @@ console.log(incrementmodule.increment());
 // 0
 console.log(incrementmodule.increment());
 // 1
-console.log(typeof(i));
+console.log(typeof (i));
 // undefined
 ```
 
@@ -168,21 +168,20 @@ console.log(typeof(i));
 Node.js possède un certain nombre de modules de base, que l'on peut simplement charger en précisant leur nom, (c'est à dire sans besoin de les installer via npm)
 
 ```
-var http = require('http');
-// http est un module de base
+const http = require('http');
 ```
 La deuxième possibilité consiste à désigner un module par son chemin d'accès (relatif ou absolu) :
 ```
-var util = require('./util');
+const util = require('./util');
 // désigne le fichier ./util.js
-var lib = require('C:/Users/Daniel/Documents/travail/lib');
+const lib = require('C:/Users/.../Documents/travail/lib');
 // lib.js
 ```
-Noter qu'il est inutile de mentionner l'extension .js, et que le chemin relatif ./ est obligatoire, même pour un fichier localisé dans le même répertoire que le module appelant.
+Noter qu'il est inutile de mentionner l'extension ```.js```, et que le chemin relatif ```./``` est obligatoire, même pour un fichier localisé dans le même répertoire que le module appelant.
 
 S'il ne s'agit ni d'un module de base, ni d'un fichier spécifié via son chemin d'accès, node examine le contenu des répertoires node_modules local, puis global. Ces répertoires sont utilisés pour stocker les modules récupérés via [npm](https://www.npmjs.com/).
 ```
-var io = require('socket.io');
+const io = require('socket.io');
 // socket.io est un module chargé via npm
 ```
 
@@ -242,15 +241,178 @@ object.removeAllListeners('event_type');
 ```
 
 ## 5 Fichiers
-### 6.1 Lecture
-### 6.2 Écriture
+
+### Lecture
+Pour lire un fichier, on peut créer un objet ```ReadStream```:
+
+[exemple_readstream.js](examples/exemple_readstream.js)
+```
+const fs = require('fs'), stream = fs.createReadStream('./hello.txt'); // chemin relatif ou absolu
+
+stream.setEncoding('utf-8'); // pour récupérer des chaînes de caractères
+stream.on('data', function(data) { // peut être appelée plusieurs fois consécutives
+    console.log(data);
+});
+```
+
+Un stream est comme un robinet de données :
+* il peut éventuellement être fermé en appelant ```stream.pause()```, puis rouvert avec ```stream.resume()```
+* il prévient lorsqu'il est "asséché" (fin de fichier) en émettant un événement end et émet un événement error en cas de problème.
+
+### Écriture
+L'écriture dans un fichier s'effectue avec un ```WriteStream``` :
+```
+const fs = require('fs'), 
+myStream = fs.createWriteStream('./writestream.out'), 
+now = new Date();
+
+myStream.write(now.toString()+"\n");
+```
+
+Pour écrire en fin de fichier sans écraser le contenu existant il faut passer un second paramètre à la création du Stream :
+
+[exemple_writestream.js](examples/exemple_writestream.js)
+```
+const fs = require('fs'), 
+myStream = fs.createWriteStream('./writestream.out',{flags: 'a'}), 
+now = new Date();
+
+myStream.write(now.toString()+"\n");
+```
 
 ## 6 Serveur HTTP
-### 7.1 hello, world
-### 7.2 L'objet http.serverRequest
-### 7.3 L'objet http.serverResponse
-### 7.4 Le corps de la requête
-### 7.5 Exemple de serveur complet
+### hello, world
+Le code source d'un serveur Web répondant "hello, world" à toutes les requêtes a déjà été vu :
+
+[helloserver.js](examples/helloserver.js)
+```
+const server = require('http').createServer( function(req, res) {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end("hello, world\n");
+});
+server.listen(8080);
+console.log('Adresse du serveur: http://localhost:8080/');
+```
+
+Ce serveur se démarre en ligne de commande de la façon suivante :
+```
+node helloserver.js
+```
+Pour développer un serveur un peu plus réaliste, il faudra s'intéresser aux objets ```request``` et ```response```.
+
+### L'objet http.serverRequest
+L'objet ```request``` possède les attributs suivants :
+
+**[method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods)** : La méthode de la requête (i.e. GET, HEAD, POST...).
+
+**url** : L'adresse utilisée pour la requête, sans le protocole, le nom du serveur, ni l'identifiant de fragment mais avec le chemin d'accès et la chaîne de requête.
+
+**[headers](https://developer.mozilla.org/en-US/docs/Glossary/Request_header)** : Un objet avec la liste des entêtes http envoyées par le client avec la requête.
+
+[server_request.js](examples/server_request.js)
+```
+const http = require('http');
+const server = http.createServer(function (request, response) {
+    console.log('Quelqu\'un envoie une requête au serveur')
+    console.log("Méthode: " + request.method);
+    console.log("URL: " +request.url);
+    console.log(request.headers);
+    response.writeHead(200, { 'Content-Type': 'text/plain' });
+    response.end();
+});
+server.listen(8080);
+```
+
+### L'objet http.serverResponse
+La méthode ```response.writeHead()``` permet de spécifier le **[statut](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status)** et les **[headers](https://developer.mozilla.org/en-US/docs/Glossary/Response_header)** de la réponse.
+
+```
+const http = require('http');
+const server = http.createServer( function(request, response) {
+response.writeHead(200, {
+    'Content-Type': 'text/plain',
+    'Server': 'node.js cousu main',
+    'Cache-Control': 'no-store'
+    ...
+});
+response.end('hello, world');
+});
+server.listen(8080);
+```
+
+Dans cet exemple la réponse envoie un status 200 (OK).
+
+L'objet d’entête de l'exemple contient:
+*  le type de contenu '[Content-type](https://developer.mozilla.org/fr/docs/Web/HTTP/Reference/Headers/Content-Type)', ici du texte
+* une information sur le programme du serveur '[Server](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Server)'
+* une directive '[Cache-control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control): no-store' indiquant que la réponse ne doit pas être enregistrée en cache.
+
+> 💡 une fois la réponse préconfigurée avec ```response.writeHead()``` il est possible d'ajouter de nouvelles entêtes (ou de modifier des entêtes existantes) avec la méthode ```response.setHeader(name,value)```.
+
+On envoie le corps de la réponse avec la méthode ```response.write()``` :
+```
+response.writeHead(200, {'Content-Type': 'text/plain'});
+response.write('hello, world');
+response.end();
+```
+### Le corps de la requête
+Lorsque la fonction de callback traitant une requête est appelée, le corps de la requête n'est pas forcément déjà disponible. Pour y accéder il faut considérer la requête comme un flux, qui déclenche
+l'événement ```data``` lorsque des données arrivent et l'événement end lorsque le flux est tari :
+
+[simple_server.js](examples/simple_server.js)
+```
+const http = require('http');
+const server = http.createServer( function(request, response) {
+    html = '<!DOCTYPE html><pre>';
+    html += "<h1> Bonjour </h1> <p>Le client a demandé l'url:" + request.url + "</p>"
+    request.on('data', function(datacontent) {
+        html += datacontent;
+        console.log('[DATA] ' + datacontent + "\n");
+    });
+
+    request.on('end', function(data) {
+        response.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'});
+        response.write(html + "</pre>");
+        response.end();
+    });
+});
+server.listen(8080);
+```
+
+Les requêtes GET ne déclenchent pas l'événement ```data``` puisqu'elles ne possèdent pas de corps.
+Pour envoyer une requête avec un corps il faut appeler ce serveur avec une requête POST par exemple.
+
+### Exemple de serveur complet
+En combinant les éléments déjà vus on peut obtenir un serveur (presque) complet:
+
+[simple_server_file.js](examples/simple_server_file.js)
+```
+const fs = require('fs'), 
+    http = require('http');
+
+const server = http.createServer(function (request, response) {
+    let sent_header = false
+    const stream = fs.createReadStream('htdocs' + request.url);
+    stream.setEncoding('utf-8');
+
+    stream.on('error', function (e) {
+        response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+        response.end('ERROR 404: Désolée, le document demandé est introuvable...');
+    });
+
+    stream.on('data', function (data) {
+        if (!sent_header) {
+            response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+            sent_header = true;
+        }
+        response.write(data);
+    });
+    stream.on('end', function (data) { response.end(); });
+});
+server.listen(8080);
+```
+Dans cet exemple, le serveur délivre les documents situés dans le sous-répertoire htdocs.
+Ce serveur doit encore être amélioré pour servir des fichiers autres que text/html.
 
 ## 7 Applications Web - connect
 ### 8.1 Le module 'connect'
