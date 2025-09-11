@@ -1,12 +1,24 @@
+---
+marp: false
+---
+<!--
+theme: default
+paginate: true
+headingDivider: 3
+-->
+
 # Node.js
 Cours node.js Daniel Muller - revision 2025
 * Rearrangement de l'ordre de certaines choses
 * Mise a jour des exemples (var > const/let)
 * Ajout d'informations sur le package manager: le dossier node_modules, package.json 
+* Mise à jour des exemples de Express (v5)
 
 ## 1. Introduction
 ### Description
 [Node.js](https://nodejs.org/en/) est un framework Javascript côté serveur créé en 2009 par Ryan Dahl, qui s'appuie sur la machine virtuelle [V8 engine](https://v8.dev/docs) développée par Google pour Chrome, elle-même publiée en open source fin 2008.
+
+---
 
 Node.js a été conçu dès le départ autour d'une boucle de gestion d'événements asynchrones, et un [mécanisme d'entrées/sorties non bloquantes](https://en.wikipedia.org/wiki/Asynchronous_I/O), ce qui rend le framework extrêmement performant en termes de montée en charge.
 
@@ -16,12 +28,15 @@ Il existe de nombreux modules pour l'accès aux fichiers, au réseau, aux bases 
 
 Parmi ceux-là on s'intéressera tout particulièrement aux modules [express](https://expressjs.com/), un framework d'application web, et socket.io qui met la technologie des WebSockets à la portée de tous les navigateurs.
 
+---
+
 ### Installation
 Pour installer Node.js il faut se rendre à l'adresse :
 > https://nodejs.org/en/download/
 
 Télécharger le produit adapté à sa plateforme, puis suivre les instructions.
 
+---
 #### Hello World
 Pour tester l'installation de node, on peut entrer dans le terminal la commande suivante qui donne la version de node installée: 
 ``` 
@@ -38,10 +53,14 @@ et l'exécuter avec node:
 node helloworld.js 
 ```
 
+---
+
 #### Exemple de serveur
 L'un des points marquants de Node.js est que le framework intègre directement les fonctionnalités de communication via divers protocoles réseau. Le développement d'une application web ne nécessite donc pas de serveur web supplémentaire.
 
 Voici par exemple un serveur web répondant "hello, world" quelle que soit la ressource demandée :
+
+---
 
 [helloserver.js](examples/helloserver.js)
 ```
@@ -65,8 +84,11 @@ Cet outil, est à la fois :
 * un logiciel pour gérer les modules installés sur une machine donnée (la vôtre),
 * un standard permettant d'exprimer les dépendances entre application et modules.
 
+---
 #### package.json et node_modules
 npm permet de suivre les dépendances et de garder des informations sur un projet node grace au fichier ```package.json```. Il n'est pas obligatoire au fonctionnement du code mais est très utile.
+
+---
 
 exemple d'un fichier package.json
 ```
@@ -415,25 +437,313 @@ Dans cet exemple, le serveur délivre les documents situés dans le sous-répert
 Ce serveur doit encore être amélioré pour servir des fichiers autres que text/html.
 
 ## 7 Applications Web - connect
-### 8.1 Le module 'connect'
-### 8.2 Principe des middlewares
-### 8.3 Routage simple
-### 8.4 Exemple de middlewares
-### 8.5 Middleware "maison"
+### Le module 'connect'*
+```
+npm install connect
+npm install serve-static
+```
+[connect](https://www.npmjs.org/package/connect) est un framework de serveur http pour node. Le principe de ce module est de proposer un mécanisme pour analyser la requête et construire la réponse à l'aide d'un ensemble ordonné de
+plugins appelés middlewares.
+
+Voici un serveur délivrant les fichiers statiques du répertoire racine htdocs :
+
+[connect_server.js](examples/connect_server.js)
+```
+const connect = require('connect')
+    , static_pages = require('serve-static') // npm install serve-static
+    , app = connect()
+        .use(static_pages('htdocs'))
+        // middleware de gestion de pages statiques
+        .use(function (request, response) { // middleware maison pour gestion 404
+            response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf8' });
+            response.end('Désolé, le document demandé est introuvable...');
+        })
+    ;
+app.listen(8080);
+```
+
+N.B. Le module (```serve-static```) correspond à un middleware de gestion de pages statiques.
+Cerise sur le gâteau : à la différence du serveur précédent, celui-ci est capable de délivrer des documents de nature différente (images...).
+
+### Principe des middlewares
+Les middlewares sont des fonctions, exécutées l'une après l'autre dans l'ordre de leur enregistrement, jusqu'à ce que l'une d'elles n'appelle pas la fonction ```next()``` :
+```
+app.use(function middleware1(request, response, next) {
+    // middleware 1
+    next();
+});
+app.use(function middleware2(request, response, next) {
+    // middleware 2
+    if ( ... ) {
+        ...
+        response.end();
+    }
+    else {next();}
+});
+app.use(function middleware3(request, response) {
+    // middleware 3
+    response.writeHead(500);
+    response.end();
+});
+```
+
+Dans cet exemple ```middleware1``` passe le contrôle de manière inconditionnelle (cf. logger),
+```middleware2``` peut traiter la requête et générer une réponse (cf. module d'authentification, serveur de pages statiques, ...), et ```middleware3``` envoie une erreur dans tous les cas.
+
+### Routage simple
+```connect``` implémente une forme simple de routage. Pour cela, la méthode ```use()``` admet un premier argument correspondant au début de l'URL de la requête :
+```
+app.use('/tagada', function traitementDesRequetesTagada(request, response, next) {
+    // l'URL de la requête commence par "/tagada" ...
+    next();
+});
+
+app.use('/tsoin', function traitementDesRequetesTsoin(request, response, next) {
+    // l'URL de la requête commence par "/tsoin" ...
+    next();
+});
+```
+A noter : ce genre de routage simple est particulièrement adapté pour la construction d'un service
+web REST.
+
+### Exemple de middlewares
+Voici quelques middlewares supportés par connect :
+
+* **morgan** pour garder une trace des requêtes et/ou des réponses (logger),
+
+* **body-parser** analyse la requête et crée une propriété response.body avec le contenu du corps de la requête proprement formaté,
+
+* **cookie-parser** analyse l'entête HTTP Cookie et renseigne response.cookies avec les informations récoltées,
+
+* **serve-favicon** gère les requêtes vers l'icône éponyme (cache, ETag, Content-Type, ...),
+
+* **serve-index** gère les requêtes vers un répertoire (URL finissant en /),
+
+* **serve-static** gère les requêtes vers des documents statiques,
+
+liste non exhaustive...
+
+### Middleware "maison"
+Il est d'autre part très facile de réaliser un intergiciel maison. En voici un pour authentifier l'utilisateur via l'authentification Basic du protocole HTTP grâce au module basic-auth :
+
+[basic_auth.js](examples/basic_auth.js)
+```
+const www_auth = { 'WWW-Authenticate': 'Basic realm="Zone à accès restreint"' }
+const send401 = function (res) { res.writeHead(401, www_auth); res.end() };
+const static_pages = require('serve-static');
+function basic_auth(req, res, next) {
+    var auth = require('basic-auth')
+        // npm install basic-auth
+        , credentials = auth(req)
+        ;
+    if (!credentials) send401(res);
+    else if (credentials.name != 'root' || credentials.pass != 'password') {
+        // en cas de tentative ratée on ajoute une temporisation
+        console.log("mauvais login ou mot de passe");
+        setTimeout(send401, 5000, res);
+    }
+    else next();
+}
+
+const connect = require('connect'),
+    app = connect()
+        .use(basic_auth)
+        .use(static_pages('htdocs')).use(function (request, response) {
+            if (request.url == "/reset") {
+                send401(response);
+            } else {
+                response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf8' });
+                response.end('Désolé, le document demandé est introuvable...');
+            }
+        })
+
+app.listen(8080);
+```
 
 ## 8 Applications Web - express
-### 9.1 Le module 'express'
-### 9.2 Exemple de serveur express
-### 9.3 Générateur d'application
-### 9.4 Arborescence d'une application
-### 9.5 Lancement d'une application
+### Le module 'express'
+```
+npm install express
+```
+
+[express](https://www.npmjs.org/package/express) est un framework pour le développement d'applications web sous Node.js qui :
+* reprend le principe des middlewares de connect,
+* sait gérer le routage en fonction de la forme de l'URL,
+* sait travailler avec divers moteurs de templates (templating engines) pour la génération des
+vues (pages html, ou pas...),
+* sait générer automatiquement le code d'une application vide (scaffolding).
+Détails sur le site : [express](http://expressjs.com/)
+
+### Exemple de serveur express
+Les middlewares de connect et d'express sont compatibles.
+Les possibilités de routage reposent sur la combinaison du chemin d'accès et de la méthode HTTP avec la possibilité d'utiliser des jokers (*,?) et des emplacements pour des paramètres (cf. ci-
+dessous :id):
+
+[express_server.js](examples/express_server.js)
+```
+const express = require('express')
+    , app = express();
+
+app.get('/', function (req, res, next) {
+    res.send('Welcome to the website !');
+});
+app.get('/*splat', express.static(__dirname + '/htdocs')); // documents statiques
+app.get('/user/:id', function (req, res, next) {
+    res.send('Hello ' + req.params.id + ' !');
+});
+
+app.post('/*splat', function (req, res) {
+    // POST *
+    res.send('POST request to ' + req.originalUrl);
+});
+
+app.get('/*splat', function (req, res) {
+    // rien de tout ça...
+    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf8' });
+    res.end('Désolé, le document demandé est introuvable...');
+});
+app.listen(8080);
+```
+
+### Générateur d'application
+Pour générer le squelette d'une application, il faut le module express-generator :
+```
+npm install express-generator
+```
+
+La création d'une application (ici hello) se fait avec :
+```
+express hello
+create : hello\
+create : hello\public\
+create : hello\public\javascripts\
+create : hello\public\images\
+create : hello\public\stylesheets\
+create : hello\public\stylesheets\style.css
+create : hello\routes\
+create : hello\routes\index.js
+create : hello\routes\users.js
+create : hello\views\
+create : hello\views\error.jade
+create : hello\views\index.jade
+create : hello\views\layout.jade
+create : hello\app.js
+create : hello\package.json
+create : hello\bin\
+create : hello\bin\www
+```
+### Arborescence d'une application
+La commande express crée toute l'arborescence nécessaire pour une application.
+```
+
+```
+Le fichier ```package.json``` annonce des dépendances à express et jade (moteur de templates) et à des middlewares dont certains déjà cités pour connect : cookie-parser, debug, http-errors, morgan (logger).
+
+Un conseil : bien qu'il soit possible d'adopter une arborescence de fichiers personnalisée, il est
+fortement conseillé pour des raisons de maintenabilité, de respecter celle générée par express.
+
+### Lancement d'une application
+Avant de se servir de l'application qui vient d'être générée, il faut installer les dépendances, et démarrer le serveur:
+```
+cd hello
+npm install
+npm start
+```
+La page d'accueil se trouve ensuite à l'adresse : http://localhost:3000/
+
+Il n'y a plus alors qu'à éditer les fichiers générés pour personnaliser l'application...
 
 ## 9 Web Sockets
 ### 10.1 Le module 'socket.io'
+socket.io [npm] est un module pour le développement d'applications web temps réel qui s'adapte
+automatiquement à la technologie disponible à un instant donné (en fonction du navigateur, de la
+présence de firewalls, ...).
+npm install socket.io
+
+Le fonctionnement de socket.io est basé sur l'émission d'événements par le client (resp. le serveur)
+qui sont capturés par le serveur (resp. le client) pour être traités :
+côté serveur - 12_exemple_socketio.js
+var io = require('socket.io')();
+io.sockets.on('connection', function (socket) {
+// réception événément 'connection'
+socket.emit('hello', { 'this': 'is my data' }); // émission événement 'hello'
+});
+io.listen(8080);
+côté client - ioclient.html
+<script src="/socket.io/socket.io.js"></script>
+<script>
+var socket = io.connect('http://localhost:8080'); // émission 'connection'
+socket.on('hello', function (data) {
+// réception 'hello'
+dropzone.texContent = 'le serveur me dit : ' + JSON.stringify(data);
+});
+</script>
+[12_exemple_socketio.js] [ioclient.html]
+
 ### 10.2 Mise en oeuvre de socket.io
+socket.io peut fonctionner seul, avec le serveur http de base, avec connect, ou avec express.
+Le serveur http délivre les documents classiques et Ajax, tandis que les messages sur connexion
+persistante sont gérés par socket.io.
+Il est possible de catégoriser les messages en espaces de noms (namespaces) ce qui permet de
+multiplexer des messages issus de modules différents sur la même connexion.
+Les connexions (utilisateurs) peuvent être attachées à des salons différents (cf. chatrooms).
+Il est possible dans ce cas d'envoyer des messages depuis le serveur à toutes les connexions
+(broadcast), à toutes les connexions d'un salon (room broadcast) ou à une connexion particulière
+(direct message).
+Pour plus de détails sur l'utilisation de socket.io, on consutera le site de référence [réf. socketio].
+Il existe un site pour tester si les connexions persistantes avec le protocole websockets
+fonctionnent avec votre configuration actuelle : [test].
 
 ## 10 Persistance des données
 ### 11.1 Le module 'mysql'
+Bien que le stockage d'informations dans des fichiers plats soit possible, et que le format JSON se
+prête particulièrement bien à ce type d'exercice dans le contexte de Node.js, il arrive un moment où
+le recours à une base de données est préférable.
+Il existe des modules pour divers types de bases de données (relationnelles ou NoSQL), et en
+particulier pour mysql [npm] :
+npm install mysql
+L'envoi d'une requête et la récupération du résultat se font, comme il est d'usage sous Node.js, de
+manière asynchrone :
+var connection = require('mysql').createConnection({
+host: 'localhost',
+user: 'user',
+password: 'password',
+database: 'database'
+});
+connection.query( 'SELECT * FROM `table`' , function(err, results) {
+console.log(results);
+});
 ### 11.2 mysql SELECT
+Les informations renvoyées par une directive SELECT sont disponibles sous forme d'un tableau
+d'objets, dont les valeurs sont automatiquement mises dans le format natif adéquat de Javascript :
+13_exemple_mysql.js
+connection.query( 'SELECT * FROM `table`' , function(err, results) {
+results.forEach( function(obj,n) { // boucle sur la liste des enregistrements
+for ( var k in obj ) {
+// boucle sur les champs ...
+if ( obj.hasOwnProperty(k) ) { // ...mais pas les attributs d'Object.prototype
+console.log(n+': '+k+' = '+'('+typeof(obj[k])+')'+obj[k]);
+}
+// ----------------------------------------------------------------------
+}
+//
+1: id = (number)314
+});
+//
+1: nom = (string)Deubaze
+});
+//
+1: date =(object)Fri Feb 28 2014 00:00:00 GMT+0100 (Paris, Madrid)
+[13_exemple_mysql.js]
+À noter qu'il peut être nécessaire d'indiquer au module quel est l'encodage utilisé par le serveur
+mysql pour la connexion avec le client :
+connection = mysql.createConnection({
+host: 'localhost',
+user: 'user',
+password: 'password',
+database: 'database',
+charset: 'LATIN1_SWEDISH_CI'
+// par exemple. UTF8_GENERAL_CI par défaut
+});
 
 ## 11 Exercices
