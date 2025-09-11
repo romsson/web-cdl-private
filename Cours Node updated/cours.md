@@ -611,31 +611,31 @@ Pour générer le squelette d'une application, il faut le module express-generat
 npm install express-generator
 ```
 
-La création d'une application (ici hello) se fait avec :
+La création d'une application (ici expressgeneratorexample) se fait avec :
 ```
-express hello
-create : hello\
-create : hello\public\
-create : hello\public\javascripts\
-create : hello\public\images\
-create : hello\public\stylesheets\
-create : hello\public\stylesheets\style.css
-create : hello\routes\
-create : hello\routes\index.js
-create : hello\routes\users.js
-create : hello\views\
-create : hello\views\error.jade
-create : hello\views\index.jade
-create : hello\views\layout.jade
-create : hello\app.js
-create : hello\package.json
-create : hello\bin\
-create : hello\bin\www
+mkdir expressgeneratorexample
+cd expressgeneratorexample
+npx express-generator
 ```
 ### Arborescence d'une application
 La commande express crée toute l'arborescence nécessaire pour une application.
 ```
-
++-- app.js
++-- bin
+|   +-- www
++-- package.json
++-- public
+|   +-- images
+|   +-- javascripts
+|   +-- stylesheets
+|   +-- style.css
++-- routes
+|   +-- index.js
+|   +-- users.js
++-- views
+|    +-- error.jade
+|    +-- index.jade
+|    +-- layout.jade
 ```
 Le fichier ```package.json``` annonce des dépendances à express et jade (moteur de templates) et à des middlewares dont certains déjà cités pour connect : cookie-parser, debug, http-errors, morgan (logger).
 
