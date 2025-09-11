@@ -106,14 +106,18 @@ exemple d'un fichier package.json
   "author": "",
   "license": "ISC",
   "description": ""
-}
+} 
 
 ```
+---
+
 Le fichier ```package.json``` est créé par npm automatiquement soit : 
 1. Au debut d'un projet, on peut créer un dossier 'nomduprojet' dans lequel on va executer la commande  ``` npm init```. 
     Cette commande permet de donner des informations sur le projet en question par exemple le nom, les auteurs, la licence, le nom du fichier de point d'entrée de l'application...
 2. A l'installation d'un nouveau module dont le projet depend, on entre la commande ``` npm install module ```
     Cette commande permet de télécharger le module et l'installer dans le dossier du projet dans le sous dossier ```node_modules```, et d'ajouter la dependence dans le fichier ```package.json```.
+
+---
 
 ##### Exemple avec socket.io
 Par exemple, dans le cas d'un projet vide, on peut installer le module socket.io, en entrant la commande suivante:
@@ -124,8 +128,10 @@ Par exemple, dans le cas d'un projet vide, on peut installer le module socket.io
 ```
 le package socket.io sera alors installé dans le sous-dossier ```node_modules``` (créé par npm puisqu'il n'existe pas encore), ainsi que tous le modules dont depend socket.io.
 
-En resumer, npm et le fichier package.json permettent de partager le dossier contenant les différents fichiers d'un projet, sans inclure le sous dossier ```node_modules``` puisque toutes les dépendances sont enregistrées dans le fichier ```package.json```.
-Cela est tres utile lorsqu'il y a plusieurs contributeurs a un projet par exemple.
+---
+
+En résumé, npm et le fichier package.json permettent de partager le dossier contenant les différents fichiers d'un projet, sans inclure le sous dossier ```node_modules``` puisque toutes les dépendances sont enregistrées dans le fichier ```package.json```.
+Cela est très utile lorsqu'il y a plusieurs contributeurs à un projet par exemple.
 
 La commande ```npm install``` exécutée dans le dossier permettra de réinstaller toutes les dépendances à partir du contenu de ```package.json```. On peut rapidement faire l'essaie en supprimant le dossier node_modules et en entrant ```npm install``` > les modules listés dans ```package.json``` seront tous réinstallés.
 
@@ -143,6 +149,8 @@ echo "hello, world\n";
 ```
 Node.js résout ce problème en gérant systématiquement les E/S en mode asynchrone. Le programme appelant fournit une fonction de rappel qui est activée lorsque l'opération est achevée :
 
+---
+
 [exemple_async.js](examples/exemple_async.js)
 ```
 http.get('http://nodejs.org/', function (res) {// fonction appelée dès que
@@ -158,13 +166,13 @@ Bon à savoir : il est de la responsabilité d'une fonction de rappel de ne pas 
 ## 3 Modules
 ### L'API Modules de CommonJS
 La possibilité (volontaire ou accidentelle) de polluer l'espace global depuis n'importe quelle partie d'une application n'est pas l'une des qualités de Javascript.
-Node.js résout ce problème en implémentant la notion de modules [modules](https://wiki.commonjs.org/wiki/Modules) spécifiée par
-[CommonJS](https://en.wikipedia.org/wiki/CommonJS) : [node modules](https://nodejs.org/api/modules.html#modules_modules)
+Node.js résout ce problème en implémentant la notion de modules [modules](https://wiki.commonjs.org/wiki/Modules) spécifiée par [CommonJS](https://en.wikipedia.org/wiki/CommonJS) : [node modules](https://nodejs.org/api/modules.html#modules_modules)
 
-* un module utilise la variable prédéfinie ```exports``` comme unique moyen de transmettre son API
-(attributs, méthodes) au module appelant,
+* un module utilise la variable prédéfinie ```exports``` comme unique moyen de transmettre son API (attributs, méthodes) au module appelant,
 * un module accède à l'API d'un module dont il dépend, via la fonction prédéfinie ```require()``` qui
 lui renvoie les informations exportées par celui-ci.
+
+---
 
 Module [increment.js](examples/increment.js)
 ```
@@ -218,8 +226,9 @@ http.get({host:'nodejs.org'}, function(res) { // fonction appelée dès que res
 console.log('hello,world'); // s'affiche immédiatement
 ```
 
-Il ne faut pas confondre le pattern CPS avec celui des gestionnaires d'événement, qui s'applique
-plutôt en cas d'événements répétitifs ou aléatoires :
+Il ne faut pas confondre le pattern CPS avec celui des gestionnaires d'événement, qui s'applique plutôt en cas d'événements répétitifs ou aléatoires :
+
+---
 
 [exemple_events.js](examples/exemple_events.js)
 ```
@@ -242,13 +251,16 @@ La seule façon de connaître le nom des événements émis par un objet donné,
 nature des paramètres passés à la fonction de rappel est de consulter la documentation de l'objet
 en question.
 
-L'API pour la gestion des événements est classique. Pour enregistrer un gestionnaire il existe deux
-synonymes :
+---
+
+L'API pour la gestion des événements est classique. Pour enregistrer un gestionnaire il existe deux synonymes :
 ```
 let callbackfunction = function() { ... };
 object.addListener('event_type', callbackfunction);
 object.on('event_type', function() { ... });
 ```
+---
+
 Pour une fonction de rappel à usage unique :
 ```
 object.once('event_type', function() { ... });
@@ -293,6 +305,8 @@ myStream.write(now.toString()+"\n");
 
 Pour écrire en fin de fichier sans écraser le contenu existant il faut passer un second paramètre à la création du Stream :
 
+---
+
 [exemple_writestream.js](examples/exemple_writestream.js)
 ```
 const fs = require('fs'), 
@@ -315,6 +329,7 @@ const server = require('http').createServer( function(req, res) {
 server.listen(8080);
 console.log('Adresse du serveur: http://localhost:8080/');
 ```
+--- 
 
 Ce serveur se démarre en ligne de commande de la façon suivante :
 ```
@@ -330,6 +345,8 @@ L'objet ```request``` possède les attributs suivants :
 **url** : L'adresse utilisée pour la requête, sans le protocole, le nom du serveur, ni l'identifiant de fragment mais avec le chemin d'accès et la chaîne de requête.
 
 **[headers](https://developer.mozilla.org/en-US/docs/Glossary/Request_header)** : Un objet avec la liste des entêtes http envoyées par le client avec la requête.
+
+---
 
 [server_request.js](examples/server_request.js)
 ```
@@ -361,8 +378,9 @@ response.end('hello, world');
 });
 server.listen(8080);
 ```
-
 Dans cet exemple la réponse envoie un status 200 (OK).
+
+---
 
 L'objet d’entête de l'exemple contient:
 *  le type de contenu '[Content-type](https://developer.mozilla.org/fr/docs/Web/HTTP/Reference/Headers/Content-Type)', ici du texte
@@ -377,9 +395,12 @@ response.writeHead(200, {'Content-Type': 'text/plain'});
 response.write('hello, world');
 response.end();
 ```
+
 ### Le corps de la requête
 Lorsque la fonction de callback traitant une requête est appelée, le corps de la requête n'est pas forcément déjà disponible. Pour y accéder il faut considérer la requête comme un flux, qui déclenche
 l'événement ```data``` lorsque des données arrivent et l'événement end lorsque le flux est tari :
+
+---
 
 [simple_server.js](examples/simple_server.js)
 ```
@@ -401,6 +422,8 @@ const server = http.createServer( function(request, response) {
 server.listen(8080);
 ```
 
+---
+
 Les requêtes GET ne déclenchent pas l'événement ```data``` puisqu'elles ne possèdent pas de corps.
 Pour envoyer une requête avec un corps il faut appeler ce serveur avec une requête POST par exemple.
 
@@ -409,41 +432,40 @@ En combinant les éléments déjà vus on peut obtenir un serveur (presque) comp
 
 [simple_server_file.js](examples/simple_server_file.js)
 ```
-const fs = require('fs'), 
-    http = require('http');
-
+const fs = require('fs'), http = require('http');
 const server = http.createServer(function (request, response) {
     let sent_header = false
     const stream = fs.createReadStream('htdocs' + request.url);
     stream.setEncoding('utf-8');
-
     stream.on('error', function (e) {
         response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
         response.end('ERROR 404: Désolée, le document demandé est introuvable...');
     });
-
     stream.on('data', function (data) {
         if (!sent_header) {
             response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
             sent_header = true;
-        }
-        response.write(data);
+        } response.write(data);
     });
-    stream.on('end', function (data) { response.end(); });
-});
-server.listen(8080);
+    stream.on('end', function (data) { response.end(); }); }); 
+    server.listen(8080);
 ```
+
+---
+
 Dans cet exemple, le serveur délivre les documents situés dans le sous-répertoire htdocs.
 Ce serveur doit encore être amélioré pour servir des fichiers autres que text/html.
 
 ## 7 Applications Web - connect
-### Le module 'connect'*
+### Le module 'connect'
 ```
 npm install connect
 npm install serve-static
 ```
 [connect](https://www.npmjs.org/package/connect) est un framework de serveur http pour node. Le principe de ce module est de proposer un mécanisme pour analyser la requête et construire la réponse à l'aide d'un ensemble ordonné de
 plugins appelés middlewares.
+
+---
 
 Voici un serveur délivrant les fichiers statiques du répertoire racine htdocs :
 
@@ -468,14 +490,11 @@ Cerise sur le gâteau : à la différence du serveur précédent, celui-ci est c
 ### Principe des middlewares
 Les middlewares sont des fonctions, exécutées l'une après l'autre dans l'ordre de leur enregistrement, jusqu'à ce que l'une d'elles n'appelle pas la fonction ```next()``` :
 ```
-app.use(function middleware1(request, response, next) {
-    // middleware 1
+app.use(function middleware1(request, response, next) {// middleware 1
     next();
 });
-app.use(function middleware2(request, response, next) {
-    // middleware 2
-    if ( ... ) {
-        ...
+app.use(function middleware2(request, response, next) { // middleware 2
+    if ( ... ) {        ...
         response.end();
     }
     else {next();}
@@ -487,8 +506,9 @@ app.use(function middleware3(request, response) {
 });
 ```
 
-Dans cet exemple ```middleware1``` passe le contrôle de manière inconditionnelle (cf. logger),
-```middleware2``` peut traiter la requête et générer une réponse (cf. module d'authentification, serveur de pages statiques, ...), et ```middleware3``` envoie une erreur dans tous les cas.
+---
+
+Dans cet exemple ```middleware1``` passe le contrôle de manière inconditionnelle (cf. logger), ```middleware2``` peut traiter la requête et générer une réponse (cf. module d'authentification, serveur de pages statiques, ...), et ```middleware3``` envoie une erreur dans tous les cas.
 
 ### Routage simple
 ```connect``` implémente une forme simple de routage. Pour cela, la méthode ```use()``` admet un premier argument correspondant au début de l'URL de la requête :
@@ -519,12 +539,12 @@ Voici quelques middlewares supportés par connect :
 
 * **serve-index** gère les requêtes vers un répertoire (URL finissant en /),
 
-* **serve-static** gère les requêtes vers des documents statiques,
-
-liste non exhaustive...
+* **serve-static** gère les requêtes vers des documents statiques, liste non exhaustive...
 
 ### Middleware "maison"
 Il est d'autre part très facile de réaliser un intergiciel maison. En voici un pour authentifier l'utilisateur via l'authentification Basic du protocole HTTP grâce au module basic-auth :
+
+---
 
 [basic_auth.js](examples/basic_auth.js)
 ```
@@ -578,6 +598,8 @@ Détails sur le site : [express](http://expressjs.com/)
 Les middlewares de connect et d'express sont compatibles.
 Les possibilités de routage reposent sur la combinaison du chemin d'accès et de la méthode HTTP avec la possibilité d'utiliser des jokers (*,?) et des emplacements pour des paramètres (cf. ci-
 dessous :id):
+
+---
 
 [express_server.js](examples/express_server.js)
 ```
@@ -637,6 +659,8 @@ La commande express crée toute l'arborescence nécessaire pour une application.
 |    +-- index.jade
 |    +-- layout.jade
 ```
+---
+
 Le fichier ```package.json``` annonce des dépendances à express et jade (moteur de templates) et à des middlewares dont certains déjà cités pour connect : cookie-parser, debug, http-errors, morgan (logger).
 
 Un conseil : bien qu'il soit possible d'adopter une arborescence de fichiers personnalisée, il est
@@ -655,75 +679,104 @@ Il n'y a plus alors qu'à éditer les fichiers générés pour personnaliser l'a
 
 ## 9 Web Sockets
 ### 10.1 Le module 'socket.io'
-socket.io [npm] est un module pour le développement d'applications web temps réel qui s'adapte
-automatiquement à la technologie disponible à un instant donné (en fonction du navigateur, de la
-présence de firewalls, ...).
-npm install socket.io
+[socket.io](https://www.npmjs.com/package/socket.io) est un module pour le développement d'applications web temps réel qui s'adapte automatiquement à la technologie disponible à un instant donné (en fonction du navigateur, de la présence de firewalls, ...).
 
-Le fonctionnement de socket.io est basé sur l'émission d'événements par le client (resp. le serveur)
-qui sont capturés par le serveur (resp. le client) pour être traités :
-côté serveur - 12_exemple_socketio.js
-var io = require('socket.io')();
+```
+npm install socket.io
+```
+
+Le fonctionnement de ```socket.io``` est basé sur l'émission d'événements par le client (resp. le serveur) qui sont capturés par le serveur (resp. le client) pour être traités :
+
+---
+
+côté serveur -
+[exemple_socketio.js](examples/exemple_socketio.js)
+```
+const express = require('express')
+  , app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/ioclient.html');
+});
+
 io.sockets.on('connection', function (socket) {
-// réception événément 'connection'
-socket.emit('hello', { 'this': 'is my data' }); // émission événement 'hello'
+  // réception événement 'connection'
+  socket.emit('hello', { 'this': 'is my data' }); // émission événement 'hello'
 });
-io.listen(8080);
-côté client - ioclient.html
-<script src="/socket.io/socket.io.js"></script>
+
+server.listen(8080);
+```
+
+---
+
+côté client - 
+[ioclient.html](examples/ioclient.html)
+```
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
 <script>
-var socket = io.connect('http://localhost:8080'); // émission 'connection'
-socket.on('hello', function (data) {
-// réception 'hello'
-dropzone.texContent = 'le serveur me dit : ' + JSON.stringify(data);
-});
+    const socket = io.connect('http://localhost:8080'); // émission 'connection'
+    socket.on('hello', function (data) {
+        // réception 'hello'
+        console.log('le serveur me dit : ' + JSON.stringify(data));
+    });
 </script>
-[12_exemple_socketio.js] [ioclient.html]
+```
 
 ### 10.2 Mise en oeuvre de socket.io
 socket.io peut fonctionner seul, avec le serveur http de base, avec connect, ou avec express.
-Le serveur http délivre les documents classiques et Ajax, tandis que les messages sur connexion
-persistante sont gérés par socket.io.
-Il est possible de catégoriser les messages en espaces de noms (namespaces) ce qui permet de
-multiplexer des messages issus de modules différents sur la même connexion.
-Les connexions (utilisateurs) peuvent être attachées à des salons différents (cf. chatrooms).
-Il est possible dans ce cas d'envoyer des messages depuis le serveur à toutes les connexions
-(broadcast), à toutes les connexions d'un salon (room broadcast) ou à une connexion particulière
-(direct message).
-Pour plus de détails sur l'utilisation de socket.io, on consutera le site de référence [réf. socketio].
-Il existe un site pour tester si les connexions persistantes avec le protocole websockets
-fonctionnent avec votre configuration actuelle : [test].
+Le serveur http délivre les documents classiques et Ajax, tandis que les messages sur connexion persistante sont gérés par socket.io.
+Il est possible de catégoriser les messages en espaces de noms (*namespaces*) ce qui permet de multiplexer des messages issus de modules différents sur la même connexion.
+Les connexions (*utilisateurs*) peuvent être attachées à des salons différents (*chatrooms*).
+Il est possible dans ce cas d'envoyer des messages depuis le serveur à toutes les connexions (*broadcast*), à toutes les connexions d'un salon (*room broadcast*) ou à une connexion particulière (*direct message*).
+
+---
+
+Pour plus de détails sur l'utilisation de socket.io, on consultera le site de référence [réf. socketio](http://socket.io/docs).
+
+Il existe un site pour tester si les connexions persistantes avec le protocole websockets fonctionnent avec votre configuration actuelle : [test](http://websocketstest.com/).
 
 ## 10 Persistance des données
-### 11.1 Le module 'mysql'
-Bien que le stockage d'informations dans des fichiers plats soit possible, et que le format JSON se
-prête particulièrement bien à ce type d'exercice dans le contexte de Node.js, il arrive un moment où
-le recours à une base de données est préférable.
-Il existe des modules pour divers types de bases de données (relationnelles ou NoSQL), et en
-particulier pour mysql [npm] :
+### Le module 'mysql'
+Bien que le stockage d'informations dans des fichiers plats soit possible, et que le format JSON se prête particulièrement bien à ce type d'exercice dans le contexte de Node.js, il arrive un moment où le recours à une base de données est préférable.
+
+Il existe des modules pour divers types de bases de données (relationnelles ou NoSQL), et en particulier pour [mysql](https://www.npmjs.org/package/mysql):
+```
 npm install mysql
-L'envoi d'une requête et la récupération du résultat se font, comme il est d'usage sous Node.js, de
-manière asynchrone :
-var connection = require('mysql').createConnection({
-host: 'localhost',
-user: 'user',
-password: 'password',
-database: 'database'
+```
+
+---
+
+L'envoi d'une requête et la récupération du résultat se font, comme il est d'usage sous Node.js, de manière asynchrone:
+
+```
+const connection = require('mysql').createConnection({
+    host: 'localhost',
+    user: 'user',
+    password: 'password',
+    database: 'database'
 });
+
 connection.query( 'SELECT * FROM `table`' , function(err, results) {
-console.log(results);
+    console.log(results);
 });
-### 11.2 mysql SELECT
-Les informations renvoyées par une directive SELECT sont disponibles sous forme d'un tableau
-d'objets, dont les valeurs sont automatiquement mises dans le format natif adéquat de Javascript :
-13_exemple_mysql.js
+```
+
+### mysql SELECT
+Les informations renvoyées par une directive ```SELECT``` sont disponibles sous forme d'un tableau d'objets, dont les valeurs sont automatiquement mises dans le format natif adéquat de Javascript :
+
+---
+
+[exemple_mysql.js](examples/exemple_mysql.js)
+```
 connection.query( 'SELECT * FROM `table`' , function(err, results) {
-results.forEach( function(obj,n) { // boucle sur la liste des enregistrements
-for ( var k in obj ) {
-// boucle sur les champs ...
-if ( obj.hasOwnProperty(k) ) { // ...mais pas les attributs d'Object.prototype
-console.log(n+': '+k+' = '+'('+typeof(obj[k])+')'+obj[k]);
-}
+    results.forEach( function(obj,n) { // boucle sur la liste des enregistrements
+    for ( var k in obj ) {
+        // boucle sur les champs ...
+        if ( obj.hasOwnProperty(k) ) { // ...mais pas les attributs d'Object.prototype
+            console.log(n+': '+k+' = '+'('+typeof(obj[k])+')'+obj[k]);
+        }
 // ----------------------------------------------------------------------
 }
 //
@@ -735,15 +788,18 @@ console.log(n+': '+k+' = '+'('+typeof(obj[k])+')'+obj[k]);
 //
 1: date =(object)Fri Feb 28 2014 00:00:00 GMT+0100 (Paris, Madrid)
 [13_exemple_mysql.js]
-À noter qu'il peut être nécessaire d'indiquer au module quel est l'encodage utilisé par le serveur
-mysql pour la connexion avec le client :
-connection = mysql.createConnection({
-host: 'localhost',
-user: 'user',
-password: 'password',
-database: 'database',
-charset: 'LATIN1_SWEDISH_CI'
-// par exemple. UTF8_GENERAL_CI par défaut
-});
+```
 
-## 11 Exercices
+---
+
+À noter qu'il peut être nécessaire d'indiquer au module quel est l'encodage utilisé par le serveur mysql pour la connexion avec le client :
+```
+connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'user',
+    password: 'password',
+    database: 'database',
+    charset: 'LATIN1_SWEDISH_CI'
+    // par exemple. UTF8_GENERAL_CI par défaut
+});
+```
