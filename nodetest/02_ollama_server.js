@@ -1,5 +1,6 @@
-import connect from 'connect'
-import {Ollama} from 'ollama';
+const connect = require('connect')
+const { Ollama } = require('ollama');
+
 const app = connect();
 const port = 8080;
 const ollama_host = "localhost",
@@ -22,7 +23,6 @@ app.use(function (request, response, next) {
                         })
                         finito(res)
                     }).then((res) => {
-                        console.log("answer")
                         response.end(res.message.content)
                     })
                 })
@@ -42,6 +42,5 @@ app.use(function (request, response) {
     response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf8' });
     response.end('erreur 404');
 });
-
 
 app.listen(port);
