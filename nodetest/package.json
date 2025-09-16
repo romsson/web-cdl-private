@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0"
+    "connect": "^3.7.0",
+    "express": "^5.1.0",
+    "ollama": "^0.5.18"
   }
 }
