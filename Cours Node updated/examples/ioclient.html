@@ -1,8 +1,0 @@
-<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
-<script>
-    const socket = io.connect('http://localhost:8080'); // émission 'connection'
-    socket.on('hello', function (data) {
-        // réception 'hello'
-        console.log('le serveur me dit : ' + JSON.stringify(data));
-    });
-</script>
