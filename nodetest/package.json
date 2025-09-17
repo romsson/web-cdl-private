@@ -12,6 +12,7 @@
     "connect": "^3.7.0",
     "express": "^5.1.0",
     "ollama": "^0.5.18",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
   }
 }

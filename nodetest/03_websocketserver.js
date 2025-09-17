@@ -16,27 +16,20 @@ let options = {
     lang: 'fr'
 }
 
-mychatterbot.chat('hello !').then((answer) => {
-    console.log(answer);
-    
-    mychatterbot.chatWithOptions(options, " What'sup ? ").then((answer) => {
-        console.log(answer);
-    });
-});
-
-
 io.on('connection', (socket) => {
     console.log('New user connected');
-
-    socket.emit('newMessage', { from: 'Server', text: 'Welcome!', createdAt: Date.now() });
-
-    socket.on('createMessage', (message) => {
-        console.log('New message:', message);
-        io.emit('newMessage', message); // Send to everyone
+    
+    socket.on('chatmessage', (message) => {
+        console.log(message)
+        mychatterbot.chat(message).then((answer) => {
+            socket.emit('chatanswer', answer);
+            console.log(answer);
+        });
     });
 
     socket.on('disconnect', () => {
         console.log('User disconnected');
+        // Stop my chatterbot and save
     });
 });
 
