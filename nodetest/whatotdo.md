@@ -73,10 +73,29 @@ try {
 
 Simple server 
 
-ajouter des options, read stream
-
-
 implementation chat websockets
+
+classe chatbot
+
+jouer avec les prompt custom et se rendre compte que sans memoire c'est limité
+
+
+
+Ajouter des templates: chaque template est propre au modele / a la maniere dont il a ete entrainé 
+
+template pour llama2 :
+```
+<s>[INST] <<SYS>>
+{{ system_prompt }}
+<</SYS>>
+
+{{ user_message }} [/INST]
+```
+
+
+
+
+
 
 connecter tool meteo 
 
