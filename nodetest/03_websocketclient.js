@@ -13,18 +13,7 @@ function doChat() {
         output: process.stdout,
     });
     rl.question(`Ask something: `, prompt => {
-        let promptwords = prompt.split(" ");
-        switch (promptwords[0]) {
-            case "draw":
-                promptwords.splice(0, 1);
-                let drawtopic = promptwords.join(" ");
-                io.emit('chatmessage', "make a complex ascii art drawing, without using emoji,  representing: "+ drawtopic + ". only answer with the drawing; no more words and it must not be an emoji");
-                break;
-        
-            default:
-                io.emit('chatmessage', prompt);
-                break;
-        }
+        io.emit('chatmessage', prompt);
         rl.close();
     });
 }

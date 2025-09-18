@@ -47,53 +47,38 @@ Un script simple pour se connecter à Ollama et envoyer des prompts sans avoir �
 
 [01_ollama_client.js](01_ollama_client.js)
 
-```js
-import ollama from 'ollama'
+## 02 Simple server `02_ollama_server.js`
 
-const model = "llama2"
-let prompt = "Hello"
-
-let start_time = Date.now();
-
-try {
-    const response = await ollama.chat({
-        model: model,
-        messages: [{ role: 'user', content: prompt }]
-    })
-    let end_time = Date.now();
-    let elapsed_time = end_time - start_time;
-
-    console.log("Response from "+ model + ":")
-    console.log(response.message.content)
-    console.log(`Response time: ${elapsed_time / 1000} seconds`)
-} catch (e) {
-    console.log(e);
-}
+Server recoit des requetes post et les transforme en prompt ollama 
+Tester avec curl 
+```
+curl -X POST http://127.0.0.1:8089/chat \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Write a haiku about servers"}'
 ```
 
-Simple server 
+## 03 Implementation chat websockets - premier chatbot
 
-implementation chat websockets
+* Server (dans le quel on charge le modèle) [03_websocketserver.js](03_websocketserver.js)
+* Client [03_websocketclient.js](03_websocketclient.js)
+* tester requete/reponse ollama 
 
-classe chatbot
+## 04 Créer une classe dédiée chatbot
+* Classe [MyChatterBot](MyChatterBot.js)
+* Importer et instancier dans [03_websocketserver.js](03_websocketserver.js)
+* jouer avec les prompt custom
 
-jouer avec les prompt custom et se rendre compte que sans memoire c'est limité
+## 05 Tuner le modèle 
+* Créer une classe [MyTunedChatterBot](MyTunedChatterBot.js) qui herite de MyChatterBot
+* ajout de contexte avec les prompts 'system'
 
+## 06 Ajouter de la memoire
+* Créer une classe [MyMemoryChatterBot](MyMemoryChatterBot.js) qui hérite de MyChatterBot
 
+## 07 Sauvergarder la memoire 
+* Enregistrer la memoire dans un fichier puis la charger au demarrage du chatbot
 
-Ajouter des templates: chaque template est propre au modele / a la maniere dont il a ete entrainé 
-
-template pour llama2 :
-```
-<s>[INST] <<SYS>>
-{{ system_prompt }}
-<</SYS>>
-
-{{ user_message }} [/INST]
-```
-
-
-
+## 08 Fournir des informations au modèle (tools) 
 
 
 

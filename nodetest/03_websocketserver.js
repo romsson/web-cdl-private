@@ -1,24 +1,30 @@
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
-const chatter = require('./MyChatterBot');
-const port = 8080;
 
+const chatter = require('./MyChatterBot'),
+    tunedchatter = require('./MyTunedChatterBot'),
+    memorychatter = require('./MyMemoryChatterBot');
+
+
+// 04 ----------------------- Basic
+let mychatterbot = new chatter("llama3.1:8b");
+
+// 05 ----------------------- Tuning 
+// let mychatterbot = new tunedchatter("llama3.1:8b");
+// mychatterbot.systemPrompt = "Act like Rick from Rick and morty";
+
+// 06 ----------------------- Memory 
+// let mychatterbot = new memorychatter("llama3.1:8b");
+
+const port = 8080;
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server); // Initialize socket.io
 
-const mychatterbot = new chatter("llama2");
-
-let options = {
-    ASCII: true,
-    poem: true,
-    lang: 'fr'
-}
-
 io.on('connection', (socket) => {
     console.log('New user connected');
-    
+
     socket.on('chatmessage', (message) => {
         console.log(message)
         mychatterbot.chat(message).then((answer) => {
@@ -29,7 +35,6 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log('User disconnected');
-        // Stop my chatterbot and save
     });
 });
 
