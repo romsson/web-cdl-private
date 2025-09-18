@@ -4,7 +4,8 @@ const socketIO = require('socket.io');
 
 const chatter = require('./MyChatterBot'),
     tunedchatter = require('./MyTunedChatterBot'),
-    memorychatter = require('./MyMemoryChatterBot');
+    memorychatter = require('./MyMemoryChatterBot'),
+    meteochatter = require('./MyMeteoChatterBot');
 
 
 // 04 ----------------------- Basic
@@ -16,6 +17,11 @@ let mychatterbot = new chatter("llama3.1:8b");
 
 // 06 ----------------------- Memory 
 // let mychatterbot = new memorychatter("llama3.1:8b");
+
+
+// 07 ----------------------- Tool and format 
+// let mychatterbot = new meteochatter("llama3.1:8b");
+
 
 const port = 8080;
 const app = express();
